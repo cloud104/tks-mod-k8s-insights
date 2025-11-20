@@ -4,7 +4,7 @@ locals {
   }
 }
 
-category "ingress" {
+category "grafanas" {
   title = "Grafanas"
   color = local.ingress_color
   href  = "/kubernetes_insights.dashboard.grafana_detail?input.grafana_uid={{.properties.'UID' | @uri}}"
