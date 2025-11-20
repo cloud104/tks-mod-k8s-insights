@@ -40,6 +40,6 @@ query "logins_list_table" {
       jsonb_array_elements(rules) AS rule,
       LATERAL (SELECT rule ->> 'host' AS host) AS hosts
     WHERE
-      host LIKE 'grafana.%'
+      host LIKE 'login.%'
   EOQ
 }
