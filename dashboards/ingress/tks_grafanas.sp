@@ -27,7 +27,7 @@ query "grafanas_list_table" {
       context_name AS "Cluster ID",
       name AS "Ingress Name",
       namespace as "Namespace",
-      jsonb_array_elements(rules) ->> 'host' AS "Host/URL",
+      host AS "Host/URL",
       jsonb_array_elements(
         jsonb_array_elements(rules) -> 'http' -> 'paths'
       ) -> 'backend' -> 'service' ->> 'name' AS "Service Name",
@@ -36,8 +36,10 @@ query "grafanas_list_table" {
       ) ->> 'path' AS "Path", 
       COALESCE(load_balancer -> 0 ->> 'ip', load_balancer -> 0 ->> 'hostname') AS "External_IP/LB_Hostname"
     FROM
-      kubernetes_ingress
+      kubernetes_ingress,
+      jsonb_array_elements(rules) AS rule,
+      LATERAL (SELECT rule ->> 'host' AS host) AS hosts
     WHERE
-      jsonb_array_elements(rules) ->> 'host' LIKE 'grafana.%.k8s.%.tks.sh'
+      host LIKE 'grafana.%'
   EOQ
 }
